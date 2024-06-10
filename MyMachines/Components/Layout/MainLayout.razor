@@ -1,23 +1,35 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<NavMenu />
+
+<main class="container container-xl">
+    <div class="row">
+        <div class="col-12">
+            <h1>Dashboard</h1>
+            <p>[Placeholder för ingresstext]</p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-xl-3 col-md-4">
+            <div class="sidebar-stats bg-white border border-white rounded p-3">
+                [Placeholder for stats]
+                </div>
+
+        </div>
+        <div class="col-xl-9 col-md-8">
+            <div class="main-content-area bg-white border border-white rounded p-3">
+                @Body
+            </div>
+        </div>
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    <div class="row">
+        <div class="col-12">
+            <div id="blazor-error-ui">
+                An unhandled error has occurred.
+                <a href="" class="reload">Reload</a>
+                <a class="dismiss">🗙</a>
+            </div>
         </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    </div>
+</main>
