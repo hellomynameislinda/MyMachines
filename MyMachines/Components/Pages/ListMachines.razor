@@ -1,0 +1,62 @@
+﻿@* Add a route parameter, this parameter needs a corresponding parameter attribute to work.
+   It will be called by /my-machines/123
+   Without the parameter added to the URL, we will get a 404, this is avoided by adding the ? behind the parameter.
+   The :int means we will only bind int values to the parameter (otherwise the parameter has to be a string).
+*@
+@page "/my-machines/{machineid:int?}"
+@* @page "/my-machines" *@
+
+@rendermode InteractiveServer
+
+<PageTitle>MyMachines - Display machines</PageTitle>
+<h3>MyMachines</h3>
+
+
+@if (MachineId == 0)
+{
+    <div>These are all the machines</div>
+}
+else
+{
+
+    <div>This is the machine: @MachineId</div>
+}
+
+@if (myMachinesList == null) // This can be used to show something while loading content
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>This is a list of machines</div>
+    <div>@myMachinesList</div>
+}
+<button class="btn btn-primary" @onclick="UpdateMachineListAsync">Update machine list</button>
+<button class="btn btn-primary" @onclick="() => myMachinesList += ';' + myMachinesList">Duplicate machine list</button>
+
+
+@code {
+    private string myMachinesList = null;
+
+    protected override void OnInitialized()
+    {
+        // For testing purposes only
+        Task.Delay(1000);
+
+        //base.OnInitialized();
+        myMachinesList = "Machine1;Machine2";
+    }
+
+    [Parameter]
+    public int MachineId { get; set; }
+
+    async Task UpdateMachineListAsync()
+    {
+        myMachinesList = "NewMachine1;NewMachine2";
+    }
+
+
+    // TODO: Hämta data i onbeforerender med parameter för att det ska vara den första
+    // IDisposable/Dispose
+
+}
