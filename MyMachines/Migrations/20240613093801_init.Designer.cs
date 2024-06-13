@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyMachines.API.Data;
+using MyMachines.Data;
 
 #nullable disable
 
-namespace MyMachines.API.Migrations
+namespace MyMachines.Migrations
 {
-    [DbContext(typeof(MyMachinesAPIContext))]
-    [Migration("20240613090114_init")]
+    [DbContext(typeof(MyMachinesContext))]
+    [Migration("20240613093801_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace MyMachines.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MyMachines.API.Entities.Machine", b =>
+            modelBuilder.Entity("MyMachines.Entities.Machine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

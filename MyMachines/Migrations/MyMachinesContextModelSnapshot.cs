@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MyMachines.API.Data;
+using MyMachines.Data;
 
 #nullable disable
 
-namespace MyMachines.API.Migrations
+namespace MyMachines.Migrations
 {
-    [DbContext(typeof(MyMachinesAPIContext))]
-    partial class MyMachinesAPIContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(MyMachinesContext))]
+    partial class MyMachinesContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -22,7 +22,7 @@ namespace MyMachines.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MyMachines.API.Entities.Machine", b =>
+            modelBuilder.Entity("MyMachines.Entities.Machine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

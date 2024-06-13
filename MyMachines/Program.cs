@@ -1,6 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using MyMachines.Data;
 using MyMachines.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MyMachinesContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyMachinesContext") ?? throw new InvalidOperationException("Connection string 'MyMachinesContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

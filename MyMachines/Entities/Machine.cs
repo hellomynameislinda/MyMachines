@@ -1,4 +1,4 @@
-﻿namespace MyMachines.API.Entities
+﻿namespace MyMachines.Entities
 {
     public class Machine
     {
