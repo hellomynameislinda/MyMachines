@@ -4,6 +4,7 @@
    The :int means we will only bind int values to the parameter (otherwise the parameter has to be a string).
 *@
 @page "/my-machines/{machineid:int?}"
+@using MyMachines.Components.SubComponents
 @* @page "/my-machines" *@
 
 @rendermode InteractiveServer
@@ -34,9 +35,24 @@ else
 <button class="btn btn-primary" @onclick="UpdateMachineListAsync">Update machine list</button>
 <button class="btn btn-primary" @onclick="() => myMachinesList += ';' + myMachinesList">Duplicate machine list</button>
 
+<div>
+    <input @onchange="OnChange">
+    <p>@text</p>
+</div>
+<div>
+
+    <input @oninput="OnInput">
+    <p>@text2</p>
+</div>
+
+<CrossComponentEventButton OnClick="UpdateMachineListAsync" class="btn btn-outline-primary">Click the button</CrossComponentEventButton>
+
 
 @code {
+
     private string myMachinesList = null;
+    string text;
+    string text2;
 
     protected override void OnInitialized()
     {
@@ -47,8 +63,9 @@ else
         myMachinesList = "Machine1;Machine2";
     }
 
+
     [Parameter]
-    public int MachineId { get; set; }
+    public int MachineId { get; set; } // Same name as the route paramater, to pick it up. Not case sensitive.
 
     async Task UpdateMachineListAsync()
     {
@@ -59,4 +76,13 @@ else
     // TODO: Hämta data i onbeforerender med parameter för att det ska vara den första
     // IDisposable/Dispose
 
+
+    private void OnChange(ChangeEventArgs e)
+    {
+        text = (string)e.Value;
+    }
+    private void OnInput(ChangeEventArgs e)
+    {
+        text2 = (string)e.Value;
+    }
 }

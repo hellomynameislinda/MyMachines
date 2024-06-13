@@ -1,8 +1,17 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MyMachines.API.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MyMachinesAPIContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyMachinesAPIContext") ?? throw new InvalidOperationException("Connection string 'MyMachinesAPIContext' not found.")));
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true)
+    .AddNewtonsoftJson()
+    .AddXmlDataContractSerializerFormatters();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

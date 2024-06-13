@@ -1,0 +1,15 @@
+﻿<button @onclick="OnClick" @attributes="AdditionalAttributes">@ChildContent</button>
+
+@code {
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } //The name is important here!
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } // Render this using the attributes directive
+
+    // private Task OnButtonClick(MouseEventArgs e)
+    // {
+    //     return OnClick.InvokeAsync(e);
+    // }
+}
