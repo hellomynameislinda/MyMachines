@@ -1,0 +1,118 @@
+﻿@page "/todo"
+@rendermode InteractiveServer
+
+<h3>Todo (@todos.Count(t => !t.IsDone))</h3>
+
+<ul>
+    @foreach (var todo in todos)
+    {
+        <li>
+            <input type="checkbox" @bind="todo.IsDone" />
+            <input @bind="todo.Title" />
+        </li>
+    }
+</ul>
+<input @bind="newTodo" />
+<button class="btn btn-primary" @onclick="AddTodo">Add todo</button>
+
+<h2>Exemple code for reference</h2>
+
+
+
+
+@if (myMachinesList == null) // This can be used to show something while loading content
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>This is a list of machines</div>
+    <div>@myMachinesList</div>
+}
+<button class="btn btn-primary" @onclick="UpdateMachineListAsync">Update machine list</button>
+<button class="btn btn-primary" @onclick="() => myMachinesList += ';' + myMachinesList">Duplicate machine list</button>
+
+<div>
+    <input @onchange="OnChange">
+    <p>@text</p>
+</div>
+<div>
+
+    <input @oninput="OnInput">
+    <p>@text2</p>
+</div>
+<div>
+
+    <input @bind="searchTerm" @bind:event="oninput" @bind:after="Search">
+    <p>Search term: @searchTerm</p>
+    <h4>Search result</h4>
+    <p>@searchResult</p>
+</div>
+
+<CrossComponentEventButton OnClick="UpdateMachineListAsync" class="btn btn-outline-primary">Click the button</CrossComponentEventButton>
+
+@code {
+    List<TodoItem> todos = new List<TodoItem>();
+    string newTodo = "";
+
+    public class TodoItem
+    {
+        public string Title { get; set; }
+        public bool IsDone { get; set; }
+    }
+
+    private void AddTodo(MouseEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(newTodo))
+        {
+            todos.Add(new TodoItem { Title = newTodo });
+            newTodo = "";
+        }
+    }
+
+
+
+
+    private string myMachinesList = null;
+    string text;
+    string text2;
+    string searchTerm;
+    string searchResult;
+
+    protected override void OnInitialized()
+    {
+        // For testing purposes only
+        Task.Delay(1000);
+
+        //base.OnInitialized();
+        myMachinesList = "Machine1;Machine2";
+    }
+
+
+    async Task UpdateMachineListAsync()
+    {
+        myMachinesList = "NewMachine1;NewMachine2";
+    }
+
+
+    // TODO: Hämta data i onbeforerender med parameter för att det ska vara den första
+    // IDisposable/Dispose
+
+
+    private void OnChange(ChangeEventArgs e)
+    {
+        text = (string)e.Value;
+    }
+    private void OnInput(ChangeEventArgs e)
+    {
+        text2 = (string)e.Value;
+    }
+
+    async Task Search()
+    {
+        // Happens for each key stroke, so the random is generated once for each.
+        searchResult = "Searching...";
+        await Task.Delay(2000);
+        searchResult = $"Found {Random.Shared.Next()} results!";
+    }
+}

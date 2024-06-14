@@ -1,0 +1,53 @@
+﻿@page "/machines/create"
+@inject MyMachines.Data.MyMachinesContext DB
+@using MyMachines.Entities
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>Machine</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Machine" OnValidSubmit="AddMachine" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Machine.Name" class="form-control" /> 
+                <ValidationMessage For="() => Machine.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label> 
+                <InputCheckbox id="status" @bind-Value="Machine.Status" class="form-check-input" /> 
+                <ValidationMessage For="() => Machine.Status" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="dateadded" class="form-label">DateAdded:</label> 
+                <InputDate id="dateadded" @bind-Value="Machine.DateAdded" class="form-control" /> 
+                <ValidationMessage For="() => Machine.DateAdded" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/machines">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public Machine Machine { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddMachine()
+    {
+        DB.Machine.Add(Machine);
+        await DB.SaveChangesAsync();
+        NavigationManager.NavigateTo("/machines");
+    }
+}

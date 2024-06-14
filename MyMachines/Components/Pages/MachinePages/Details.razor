@@ -1,0 +1,49 @@
+﻿@page "/machines/details"
+@inject MyMachines.Data.MyMachinesContext DB
+@using MyMachines.Entities
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Machine</h4>
+    <hr />
+    @if (machine is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@machine.Name</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@machine.Status</dd>
+            <dt class="col-sm-2">DateAdded</dt>
+            <dd class="col-sm-10">@machine.DateAdded</dd>
+        </dl>
+        <div>
+            <a href="@($"/machines/edit?id={machine.Id}")">Edit</a> |
+            <a href="@($"/machines")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Machine? machine;
+
+    [SupplyParameterFromQuery]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        machine = await DB.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (machine is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

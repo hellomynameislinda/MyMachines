@@ -1,0 +1,61 @@
+﻿@page "/machines/delete"
+@inject MyMachines.Data.MyMachinesContext DB
+@using MyMachines.Entities
+@inject NavigationManager NavigationManager
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Machine</h4>
+    <hr />
+    @if (machine is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@machine.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@machine.Status</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DateAdded</dt>
+            <dd class="col-sm-10">@machine.DateAdded</dd>
+        </dl>
+        <EditForm method="post" Model="machine" OnValidSubmit="DeleteMachine" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(machine is null)">Delete</button> |
+            <a href="/machines">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    Machine? machine;
+
+    [SupplyParameterFromQuery]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        machine = await DB.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (machine is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task DeleteMachine()
+    {
+        DB.Machine.Remove(machine!);
+        await DB.SaveChangesAsync();
+        NavigationManager.NavigateTo("/machines");
+    }
+}

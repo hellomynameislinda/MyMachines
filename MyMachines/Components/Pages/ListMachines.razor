@@ -5,17 +5,60 @@
 *@
 @page "/my-machines/{machineid:int?}"
 @using MyMachines.Components.SubComponents
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using MyMachines.Entities
+@inject MyMachines.Data.MyMachinesContext DbContext
 @* @page "/my-machines" *@
 
 @rendermode InteractiveServer
 
+@attribute [StreamRendering]
+
 <PageTitle>MyMachines - Display machines</PageTitle>
 <h3>MyMachines</h3>
 
-
 @if (MachineId == 0)
 {
-    <div>These are all the machines</div>
+    @if (DbContext.Machine == null) // This can be used to show something while loading content
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <QuickGrid Class="table" Items="DbContext.Machine">
+            <PropertyColumn Property="machine => machine.Name" />
+            <PropertyColumn Property="machine => machine.Status" />
+            <PropertyColumn Property="machine => machine.DateAdded" />
+
+            <TemplateColumn Context="machine">
+                <a href="@($"machines/edit?id={machine.Id}")">Edit</a> |
+                <a href="@($"machines/details?id={machine.Id}")">Details</a> |
+                <a href="@($"machines/delete?id={machine.Id}")">Delete</a>
+            </TemplateColumn>
+        </QuickGrid>
+
+
+        <EditForm method="post" Model="Machine" OnValidSubmit="AddMachine" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <InputText id="name" @bind-Value="Machine.Name" class="form-control" />
+                <ValidationMessage For="() => Machine.Name" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <InputCheckbox id="status" @bind-Value="Machine.Status" class="form-check-input" />
+                <ValidationMessage For="() => Machine.Status" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="dateadded" class="form-label">DateAdded:</label>
+                <InputDate id="dateadded" @bind-Value="Machine.DateAdded" class="form-control" />
+                <ValidationMessage For="() => Machine.DateAdded" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    }
 }
 else
 {
@@ -23,66 +66,41 @@ else
     <div>This is the machine: @MachineId</div>
 }
 
-@if (myMachinesList == null) // This can be used to show something while loading content
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div>This is a list of machines</div>
-    <div>@myMachinesList</div>
-}
-<button class="btn btn-primary" @onclick="UpdateMachineListAsync">Update machine list</button>
-<button class="btn btn-primary" @onclick="() => myMachinesList += ';' + myMachinesList">Duplicate machine list</button>
 
-<div>
-    <input @onchange="OnChange">
-    <p>@text</p>
-</div>
-<div>
 
-    <input @oninput="OnInput">
-    <p>@text2</p>
-</div>
 
-<CrossComponentEventButton OnClick="UpdateMachineListAsync" class="btn btn-outline-primary">Click the button</CrossComponentEventButton>
+
+
+
+
+
+
+
+
+
+
 
 
 @code {
 
-    private string myMachinesList = null;
-    string text;
-    string text2;
-
-    protected override void OnInitialized()
-    {
-        // For testing purposes only
-        Task.Delay(1000);
-
-        //base.OnInitialized();
-        myMachinesList = "Machine1;Machine2";
-    }
-
-
     [Parameter]
     public int MachineId { get; set; } // Same name as the route paramater, to pick it up. Not case sensitive.
 
-    async Task UpdateMachineListAsync()
+
+
+
+    [SupplyParameterFromForm]
+    public Machine Machine { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddMachine()
     {
-        myMachinesList = "NewMachine1;NewMachine2";
+        DbContext.Machine.Add(Machine);
+        await DbContext.SaveChangesAsync();
     }
 
 
-    // TODO: Hämta data i onbeforerender med parameter för att det ska vara den första
-    // IDisposable/Dispose
 
 
-    private void OnChange(ChangeEventArgs e)
-    {
-        text = (string)e.Value;
-    }
-    private void OnInput(ChangeEventArgs e)
-    {
-        text2 = (string)e.Value;
-    }
+
 }
