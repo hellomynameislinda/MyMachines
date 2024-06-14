@@ -1,5 +1,33 @@
-﻿<h3>ConfirmDeleteModal</h3>
+﻿<!-- Modal -->
+
+<div class="modal d-block show" style="display:block;" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="OnClose"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete @MachineName?<br />@MachineId</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="OnClose">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="OnConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public EventCallback OnClose { get; set; }
 
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    [Parameter]
+    public Guid MachineId { get; set; }
+
+    [Parameter]
+    public string MachineName { get; set; }
 }

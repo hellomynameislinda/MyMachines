@@ -46,24 +46,30 @@
                     {
                         <tr>
                             <th scope="row">@machine.Name</th>
-                            <td>@machine.Status</td>
+                            <td>
+                                @if (machine.Status == true)
+                                    machineStatusColor = "green";
+                                else
+                                    machineStatusColor = "red";
+                                <button type="button" class="btn btn-outline-secondary" @onclick="(() => ChangeMachineStatus(machine.Id, machine.Status))">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="@machineStatusColor" class="bi bi-power" viewBox="0 0 16 16">
+                                        <path d="M7.5 1v7h1V1z"></path>
+                                        <path d="M3 8.812a5 5 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812"></path>
+                                    </svg>
+                                    <span class="visually-hidden">Change status</span>
+                                </button>
+
+                            </td>
                             <td>@machine.DateAdded</td>
                             <td>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-outline-secondary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-power" viewBox="0 0 16 16">
-                                            <path d="M7.5 1v7h1V1z"></path>
-                                            <path d="M3 8.812a5 5 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812"></path>
-                                        </svg>
-                                        <span class="visually-hidden">Change status</span>
-                                    </button>
                                     <a href="@($"my-machines/edit?id={machine.Id}")" class="btn btn-outline-secondary" role="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"></path>
                                         </svg>
                                         <span class="visually-hidden">Edit</span>
                                     </a>
-                                    <button type="button" class="btn btn-outline-secondary">
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="(() => ConfirmDelete(machine.Id, machine.Name))">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
                                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
@@ -71,8 +77,6 @@
                                         <span class="visually-hidden">Delete</span>
                                     </button>
                                 </div>
-                                <button class="btn" onclick="TryDelete(machine.Id)">Delete</button>
-                                href="@($"machines/delete?id={machine.Id}")"
                             </td>
                         </tr>
                     }
@@ -98,16 +102,10 @@
             </table>
         </EditForm>
 
-        @if (showModal)
+        @if (showDeleteModal)
         {
-        <ConfirmDeleteModal />
+            <ConfirmDeleteModal OnClose="() => { showDeleteModal = false; }" OnConfirm="() => DoDelete(selectedMachineId)" MachineId="@selectedMachineId" MachineName="@selectedMachineName" />
         }
-
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-            Launch static backdrop modal
-        </button>
-
 
     }
 }
@@ -122,17 +120,7 @@ else
 
 
 
-
-
-
-
-
-
-
-
-
 @code {
-    public bool showModal = true;
     // Parameter is currently not used
     [Parameter]
     public int MachineId { get; set; } // Same name as the route paramater, to pick it up. Not case sensitive.
@@ -141,6 +129,13 @@ else
     public Machine Machine { get; set; } = new();
 
     public List<Machine> Machines { get; set; }
+
+    public string machineStatusColor;
+
+    // Deletion varables
+    public bool showDeleteModal = false;
+    private Guid selectedMachineId = Guid.Empty;
+    private string selectedMachineName = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -159,38 +154,49 @@ else
         DbContext.Machine.Add(Machine);
         await DbContext.SaveChangesAsync();
         await LoadMachinesAsync(); // Update list content
+        Machine = new Machine();
 
         //TODO: Empty the current fields once saved
 
     }
 
-    protected void TryDelete(Guid machineId)
+    protected async Task ChangeMachineStatus(Guid machineId, bool machineStatus)
     {
-        
+        Machine? machine;
+        Guid Id = machineId;
+
+        machine = await DbContext.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+
+        machine.Status = !machineStatus; // Switch to the status opposite to the current
+        DbContext.Machine.Update(machine);
+        await DbContext.SaveChangesAsync();
     }
 
-    // Machine? deleteMachine;
+    protected void ConfirmDelete(Guid machineId, string machineName)
+    {
+        selectedMachineId = machineId;
+        selectedMachineName = machineName;
+        showDeleteModal = true;
+    }
 
-    // [SupplyParameterFromQuery]
-    // public Guid Id { get; set; }
+    protected async Task DoDelete(Guid machineId)
+    {
+        Machine? deleteMachine;
+        Guid Id = machineId;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     machine = await DB.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+        deleteMachine = await DbContext.Machine.FirstOrDefaultAsync(m => m.Id == Id);
 
-    //     if (machine is null)
-    //     {
-    //         NavigationManager.NavigateTo("notfound");
-    //     }
-    // }
+        if (deleteMachine is null)
+        {
+            // TODO: Display error. //NavigationManager.NavigateTo("notfound");
+        }
 
-    // public async Task DeleteMachine()
-    // {
-    //     DB.Machine.Remove(machine!);
-    //     await DB.SaveChangesAsync();
-    //     NavigationManager.NavigateTo("/machines");
-    // }
+        DbContext.Machine.Remove(deleteMachine!);
+        await DbContext.SaveChangesAsync();
 
+        showDeleteModal = false;
 
+        await LoadMachinesAsync();
+    }
 
 }
