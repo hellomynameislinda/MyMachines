@@ -1,4 +1,4 @@
-﻿@page "/Machines/edit"
+﻿@page "/my-machines/edit"
 @inject MyMachines.Data.MyMachinesContext DB
 @using MyMachines.Entities
 @inject NavigationManager NavigationManager
@@ -44,7 +44,7 @@ else
 }
 
 <div>
-    <a href="/machines">Back to List</a>
+    <a href="/my-machines">Back to List</a>
 </div>
 
 @code {
@@ -86,7 +86,7 @@ else
             }
         }
 
-        NavigationManager.NavigateTo("/machines");
+        NavigationManager.NavigateTo("/my-machines");
     }
 
     bool MachineExists(Guid id)
