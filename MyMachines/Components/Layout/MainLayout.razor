@@ -1,20 +1,21 @@
 ﻿@* This must be inherited on a layout *@
 @inherits LayoutComponentBase
+@using MyMachines.Components.SubComponents
 
 <NavMenu />
 
 <main class="container container-xl">
     <div class="row">
         <div class="col-12">
-            <h1>Dashboard</h1>
+            <h1>Machine dashboard</h1>
             <p>[Placeholder för ingresstext]</p>
         </div>
     </div>
     <div class="row mt-4">
         <div class="col-xl-3 col-lg-4">
             <div class="sidebar-stats bg-white border border-white rounded p-3">
-                [Placeholder for stats]
-                </div>
+                <MachineStats />
+            </div>
 
         </div>
         <div class="col-xl-9 col-lg-8">

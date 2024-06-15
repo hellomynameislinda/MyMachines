@@ -1,0 +1,25 @@
+﻿@using MyMachines.Components.HelperComponents
+@using MyMachines.Entities
+@using Microsoft.EntityFrameworkCore
+@* @inject MyMachines.Data.MyMachinesContext DbContext
+ *@
+<h3>Machine Stats</h3>
+<Chart ChartType="Chart.chartType.Bar" ChartHeading="Status" />
+<Chart ChartType="Chart.chartType.Donut" ChartHeading="Machines By Year" KeyValue="@MachinesByYear" />
+@code {
+    public List<KeyValuePair<string, int>> MachinesByYear { get; set; }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await LoadStatsAsync();
+    // }
+
+    // private async Task LoadStatsAsync()
+    // {
+    //     MachinesByYear = await DbContext.Machine
+    //         .GroupBy(m => m.DateAdded.Year)
+    //         .Select(g => new KeyValuePair<string, int>(g.Key.ToString(), g.Count()))
+    //         .ToListAsync();
+    // }
+
+}
