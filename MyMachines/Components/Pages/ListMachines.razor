@@ -31,7 +31,8 @@
     {
         <EditForm method="post" Model="Machine" OnValidSubmit="AddMachine" FormName="create" Enhance>
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
+            @*             <ValidationSummary class="text-danger" />
+    *@
             <table class="table">
                 <thead>
                     <tr>
@@ -60,7 +61,7 @@
                                 </button>
 
                             </td>
-                            <td>@machine.DateAdded</td>
+                            <td>@machine.DateAdded.ToShortDateString()</td>
                             <td>
                                 <div class="btn-group">
                                     <a href="@($"my-machines/edit?id={machine.Id}")" class="btn btn-outline-secondary" role="button">
@@ -95,7 +96,14 @@
                             <InputDate id="dateadded" @bind-Value="Machine.DateAdded" class="form-control" />
                             <ValidationMessage For="() => Machine.DateAdded" class="text-danger" />
                         </td>
-                        <td><button type="submit" class="btn btn-primary">Create</button></td>
+                        <td>
+                            <button type="submit" class="btn btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+                                </svg>
+                                <span class="visually-hidden">Create</span>
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
 
