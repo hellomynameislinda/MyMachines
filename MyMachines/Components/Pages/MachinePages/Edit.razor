@@ -1,8 +1,8 @@
 ﻿@page "/my-machines/edit"
-@inject MyMachines.Data.MyMachinesContext DB
 @using MyMachines.Entities
 @inject NavigationManager NavigationManager
 @using Microsoft.EntityFrameworkCore
+@inject MyMachines.Repositories.IMachineRepository _machineRepository
 
 <PageTitle>Edit</PageTitle>
 
@@ -56,7 +56,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Machine ??= await DB.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+        Machine ??= await _machineRepository.GetAsync(Id);
 
         if (Machine is null)
         {
@@ -68,15 +68,16 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task UpdateMachine()
     {
-        DB.Attach(Machine!).State = EntityState.Modified;
+        //DB.Attach(Machine!).State = EntityState.Modified;
 
         try
         {
-            await DB.SaveChangesAsync();
+            _machineRepository.Update(Machine!);
+            //DB.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!MachineExists(Machine!.Id))
+            if (!await _machineRepository.AnyAsync(Machine!.Id))
             {
                 NavigationManager.NavigateTo("notfound");
             }
@@ -89,8 +90,4 @@ else
         NavigationManager.NavigateTo("/my-machines");
     }
 
-    bool MachineExists(Guid id)
-    {
-        return DB.Machine.Any(e => e.Id == id);
-    }
 }

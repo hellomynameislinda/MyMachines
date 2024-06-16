@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyMachines.Data;
 using MyMachines.Components;
+using MyMachines.Repositories;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<MyMachinesContext>(options =>
+builder.Services.AddDbContextFactory<MyMachinesContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyMachinesContext") ?? throw new InvalidOperationException("Connection string 'MyMachinesContext' not found.")));
 
-builder.Services.AddQuickGridEntityFrameworkAdapter();;
+builder.Services.AddTransient<IMachineRepository, MachineRepository>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

@@ -1,24 +1,33 @@
 ﻿@using MyMachines.Components.HelperComponents
+@using MyMachines.Data
 @using MyMachines.Entities
 @using Microsoft.EntityFrameworkCore
-@* @inject MyMachines.Data.MyMachinesContext DbContext
- *@
+@* @inject MyMachines.Data.MyMachinesContext DbContext*@
+@* @inject IDbContextFactory<MyMachinesContext> DbContextFactory *@
+@inject MyMachines.Repositories.IMachineRepository _machineRepository
+
 <h3>Machine Stats</h3>
-<Chart ChartType="Chart.chartType.Bar" ChartHeading="Status" />
 <Chart ChartType="Chart.chartType.Donut" ChartHeading="Machines By Year" KeyValue="@MachinesByYear" />
+<Chart ChartType="Chart.chartType.Bar" ChartHeading="Status" KeyValue="@Status" />
 @code {
     public List<KeyValuePair<string, int>> MachinesByYear { get; set; }
+    public List<KeyValuePair<string, int>> Status { get; set; }
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     await LoadStatsAsync();
-    // }
 
-    // private async Task LoadStatsAsync()
-    // {
-    //     MachinesByYear = await DbContext.Machine
-    //         .GroupBy(m => m.DateAdded.Year)
-    //         .Select(g => new KeyValuePair<string, int>(g.Key.ToString(), g.Count()))
-    //         .ToListAsync();
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStatsAsync();
+    }
+
+    private async Task LoadStatsAsync()
+    {
+        var tmpMachines = await _machineRepository.GetAllAsync();
+        MachinesByYear = tmpMachines.GroupBy(m => m.DateAdded.Year)
+        .Select(g => new KeyValuePair<string, int>(g.Key.ToString(), g.Count()))
+        .ToList();
+
+        Status = tmpMachines.GroupBy(m => m.Status)
+        .Select(g => new KeyValuePair<string, int>(g.Key.ToString().Replace("True", "Online").Replace("False", "Offline"), g.Count()))
+        .ToList();
+    }
 }

@@ -7,7 +7,7 @@
 }
 
 .chart-container {
-    background: #444e80;
+/*    background: #444e80;*/
 }
 
 
@@ -41,22 +41,38 @@
 }
 
 .circle {
-    stroke: #915db1;
+    stroke: #fff100;
     fill: none;
     stroke-width: 3;
 }
-
+    .circle:nth-child(1) {
+        stroke: #00bcf2;
+    }
     .circle:nth-child(2) {
-        stroke: #e59f3c;
+        stroke: #fff8c00;
     }
-
     .circle:nth-child(3) {
-        stroke: #5397d6;
+        stroke: #e81123;
+    }
+    .circle:nth-child(4) {
+        stroke: #00b294;
+    }
+    .circle:nth-child(5) {
+        stroke: #bad80a;
+    }
+    .circle:nth-child(6) {
+        stroke: #00188f;
+    }
+    .circle:nth-child(7) {
+        stroke: #009e49;
+    }
+    .circle:nth-child(8) {
+        stroke: #ec008c;
+    }
+    .circle:nth-child(9) {
+        stroke: #68217a;
     }
 
-    .circle:nth-child(4) {
-        stroke: #4cc790;
-    }
 
 
 
@@ -66,13 +82,13 @@
 
 
 
-.year-stats {
+.keyvalue-stats {
     white-space: nowrap;
     max-height: 170px;
     overflow: hidden;
 }
 
-    .year-stats:hover {
+    .keyvalue-stats:hover {
         overflow-x: auto;
     }
 
@@ -98,7 +114,7 @@
     background: #5397d6;
 }
 
-.month-group {
+.key-group {
     cursor: pointer;
     max-width: 400px;
     height: 110px;
@@ -113,44 +129,12 @@
     margin-bottom: 10px;
 }
 
-.month-group:hover .bar,
+.key-group:hover .bar,
 .selected .bar {
     background: #5397d6;
 }
 
-.month-group:hover p,
+.key-group:hover p,
 .selected p {
-    color: #fff;
-}
-
-.h-25 {
-    height: 25%;
-}
-
-.h-50 {
-    height: 50%;
-}
-
-.h-75 {
-    height: 75%;
-}
-
-.h-100 {
-    height: 100%;
-}
-
-
-
-
-
-
-
-
-
-.info p {
-    margin-bottom: 10px;
-}
-
-.info span {
     color: #fff;
 }

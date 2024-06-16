@@ -8,7 +8,9 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using MyMachines.Entities
 @using Microsoft.EntityFrameworkCore
-@inject MyMachines.Data.MyMachinesContext DbContext
+@* @inject MyMachines.Data.MyMachinesContext DbContext *@
+@inject MyMachines.Repositories.IMachineRepository _machineRepository
+
 @* @page "/my-machines" *@
 
 @rendermode InteractiveServer
@@ -125,9 +127,6 @@ else
 
 
 
-
-
-
 @code {
     // Parameter is currently not used
     [Parameter]
@@ -136,7 +135,7 @@ else
     [SupplyParameterFromForm]
     public Machine Machine { get; set; } = new();
 
-    public List<Machine> Machines { get; set; }
+    public IEnumerable<Machine> Machines { get; set; }
 
     public string machineStatusColor;
 
@@ -152,19 +151,20 @@ else
 
     private async Task LoadMachinesAsync()
     {
-        Machines = await DbContext.Machine.OrderBy(machine => machine.DateAdded)
-        .ToListAsync();
+        var tmpMachine = await _machineRepository.GetAllAsync();
+        Machines = tmpMachine.ToList();
+
+        // Machines = await DbContext.Machine.OrderBy(machine => machine.DateAdded)
+        // .ToListAsync();
     }
 
     //To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
     protected async Task AddMachine()
     {
-        DbContext.Machine.Add(Machine);
-        await DbContext.SaveChangesAsync();
-        await LoadMachinesAsync(); // Update list content
-        Machine = new Machine();
+        _machineRepository.Add(Machine);
 
-        //TODO: Empty the current fields once saved
+        await LoadMachinesAsync(); // Update list content
+        Machine = new Machine(); // Empties the fields and sets up for new additions
 
     }
 
@@ -173,11 +173,11 @@ else
         Machine? machine;
         Guid Id = machineId;
 
-        machine = await DbContext.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+        machine = await _machineRepository.GetAsync(Id);
 
         machine.Status = !machineStatus; // Switch to the status opposite to the current
-        DbContext.Machine.Update(machine);
-        await DbContext.SaveChangesAsync();
+        _machineRepository.Update(machine);
+        await LoadMachinesAsync();
     }
 
     protected void ConfirmDelete(Guid machineId, string machineName)
@@ -192,15 +192,14 @@ else
         Machine? deleteMachine;
         Guid Id = machineId;
 
-        deleteMachine = await DbContext.Machine.FirstOrDefaultAsync(m => m.Id == Id);
+        deleteMachine = await _machineRepository.GetAsync(Id);
 
         if (deleteMachine is null)
         {
             // TODO: Display error. //NavigationManager.NavigateTo("notfound");
         }
 
-        DbContext.Machine.Remove(deleteMachine!);
-        await DbContext.SaveChangesAsync();
+        _machineRepository.Remove(deleteMachine);
 
         showDeleteModal = false;
 
